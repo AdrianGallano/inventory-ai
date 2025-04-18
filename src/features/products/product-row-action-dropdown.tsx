@@ -8,8 +8,15 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { MoreHorizontal } from "lucide-react";
+import Product from "./domains/Product";
 
-export default function ProductRowActionDropDown() {
+interface ProductRowActionDropDownProps {
+    product: Product;
+    onEdit: (product: Product) => void;
+    onDelete: (id: string) => void;
+}
+
+export default function ProductRowActionDropDown({product, onEdit, onDelete}: ProductRowActionDropDownProps) {
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -22,8 +29,16 @@ export default function ProductRowActionDropDown() {
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>View Details</DropdownMenuItem>
-                <DropdownMenuItem>Edit</DropdownMenuItem>
-                <DropdownMenuItem>Delete</DropdownMenuItem>
+                <DropdownMenuItem
+                    onClick={() => onEdit(product)}
+                >
+                    Edit
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                    onClick={() => onDelete(product.ID)}
+                >
+                    Delete
+                </DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>
     );

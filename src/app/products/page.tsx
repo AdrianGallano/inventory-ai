@@ -9,7 +9,11 @@ export default function Page() {
                 Inventory Products
             </h3>
             <div>
-                <ProductTable data={sampleData} />
+                <ProductTable 
+                    data={sampleData} 
+                    onEdit={(product) => console.log('Edit product:', product)} 
+                    onDelete={(productId) => console.log('Delete product with ID:', productId)} 
+                />
             </div>
         </div>
     );

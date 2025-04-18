@@ -9,21 +9,22 @@ import {
 
 
 interface AnalyticsCardProps {
-    name: string
+    name: string;
+    value: string;
+    description: string
 }
 
-export default function AnalyticsCard({ name }: AnalyticsCardProps) {
+export default function AnalyticsCard({ name, value, description }: AnalyticsCardProps) {
     return (
         <Card className="gap-2">
             <CardHeader>
                 <CardTitle>{name}</CardTitle>
-                <CardDescription>Card Description</CardDescription>
             </CardHeader>
             <CardContent className="m-0">
-                <p>Card Content</p>
+                <p className="text-2xl font-bold">{value}</p>
             </CardContent>
             <CardFooter className="m-0s">
-                <p>Card Footer</p>
+                <CardDescription>{description}</CardDescription>
             </CardFooter>
         </Card>
     );

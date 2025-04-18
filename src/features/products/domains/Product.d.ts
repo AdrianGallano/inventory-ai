@@ -3,5 +3,5 @@ export default interface Product {
   name: string;
   category: string;
   quantity: number;
-  price: number | string;
+  price: number;
 }

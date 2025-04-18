@@ -34,23 +34,21 @@ import {
 import { columns } from "../product-table-columns"
 import Product from "./domains/Product"
 
-
 interface ProductTableProps {
     data: Product[];
+    onEdit: (product: Product) => void;
+    onDelete: (id: string) => void;
 }
 
-export default function ProductTable({ data }: ProductTableProps) {
+export default function ProductTable({ data, onEdit, onDelete }: ProductTableProps) {
     const [sorting, setSorting] = React.useState<SortingState>([])
-    const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-        []
-    )
-    const [columnVisibility, setColumnVisibility] =
-        React.useState<VisibilityState>({})
+    const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
+    const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
     const [rowSelection, setRowSelection] = React.useState({})
 
     const table = useReactTable({
         data,
-        columns,
+        columns: columns(onEdit, onDelete),
         onSortingChange: setSorting,
         onColumnFiltersChange: setColumnFilters,
         getCoreRowModel: getCoreRowModel(),
@@ -71,7 +69,7 @@ export default function ProductTable({ data }: ProductTableProps) {
         <div className="w-full">
             <div className="flex items-center py-4">
                 <Input
-                    placeholder="Filter products..."
+                    placeholder="Search by name..."
                     value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
                     onChange={(event) =>
                         table.getColumn("name")?.setFilterValue(event.target.value)
@@ -182,5 +180,3 @@ export default function ProductTable({ data }: ProductTableProps) {
         </div>
     )
 }
-
-

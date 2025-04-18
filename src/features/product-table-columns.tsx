@@ -11,7 +11,7 @@ import {
     ColumnDef
 } from "@tanstack/react-table"
 
-export const columns: ColumnDef<Product>[] = [
+export const columns = (onEdit: (product: Product) => void, onDelete: (id: string) => void): ColumnDef<Product>[] => [
     {
         id: "select",
         header: ({ table }) => (
@@ -104,11 +104,14 @@ export const columns: ColumnDef<Product>[] = [
     {
         id: "actions",
         enableHiding: false,
-        cell: () => {
+        cell: ({row}) => {
             return (
-                <ProductRowActionDropDown />
+                <ProductRowActionDropDown
+                    product={row.original}
+                    onEdit={onEdit}
+                    onDelete={onDelete}
+                />
             )
         },
     },
 ]
-
