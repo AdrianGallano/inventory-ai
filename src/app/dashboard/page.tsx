@@ -7,6 +7,7 @@ import {
     CardDescription,
     CardContent
 } from "@/components/ui/card";
+import {Button} from "@/components/ui/button";
 import AnalyticsCard from "@/features/analytics/analytics-card";
 
 export default function Page() {
@@ -17,22 +18,27 @@ export default function Page() {
             </h3>
             <div className="grid grid-cols-4 gap-6">
                 <AnalyticsCard name="Total items" />
-                <AnalyticsCard name="Total items" />
-                <AnalyticsCard name="Total items" />
-                <AnalyticsCard name="Total items" />
+                <AnalyticsCard name="Low Stock" />
+                <AnalyticsCard name="Out of Stock" />
+                <AnalyticsCard name="Total Value" />
             </div>
             <div className="flex gap-4">
-                <div className="flex-3">
-                    <Card className="p-4">
-                        <CardHeader className="p-0">
-                            <CardTitle>
-                                <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
-                                    Inventory Items
-                                </h4>
-                            </CardTitle>
-                            <CardDescription>
-                                manage your inventory items
-                            </CardDescription>
+                <div className="flex-4">
+                    <Card>
+                        <CardHeader>
+                            <div className="flex items-center justify-between">
+                                <div>
+                                <CardTitle>
+                                    <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
+                                        Inventory Items
+                                    </h4>
+                                </CardTitle>
+                                <CardDescription>
+                                    Manage your inventory items
+                                </CardDescription>
+                                </div>
+                                <Button variant="default">Add items</Button>
+                            </div>
                         </CardHeader>
                         <CardContent>
                             <ProductTable data={sampleData.slice(5)} />
@@ -56,9 +62,6 @@ export default function Page() {
                         </CardContent>
                     </Card>
                 </div>
-
-
-
             </div>
         </div>
     );
