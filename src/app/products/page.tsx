@@ -1,20 +1,140 @@
-'use client'
-import ProductTable from "@/features/products/product-table"
-import { sampleData } from "@/features/products/contants/sampledata";
+"use client";
+
+import { useEffect, useState } from "react";
+import ProductTable from "@/features/products/product-table";
+import AddProductForm from "@/features/crud/AddProductForm";
+import EditProductForm from "@/features/crud/EditProductForm";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import Product from "@/features/products/domains/Product";
+
+interface ApiProduct {
+    id: number;
+    name: string;
+    category: string;
+    quantity: number;
+    price: number;
+}
 
 export default function Page() {
+    const [products, setProducts] = useState<Product[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [showAddForm, setShowAddForm] = useState(false);
+    const [showEditForm, setShowEditForm] = useState(false);
+    const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const response = await fetch("http://127.0.0.1:8000/api/products/", {
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                });
+                if (!response.ok) {
+                    throw new Error("Failed to fetch products");
+                }
+                const data: ApiProduct[] = await response.json();
+                const transformedData: Product[] = data.map((item) => ({
+                    ID: item.id.toString(),
+                    name: item.name,
+                    category: item.category,
+                    quantity: item.quantity,
+                    price: item.price,
+                }));
+                setProducts(transformedData);
+            } catch (error) {
+                console.error("Error fetching products:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchProducts();
+    }, []);
+
+    const handleAddProduct = (newProduct: Product) => {
+        setProducts([...products, newProduct]);
+        setShowAddForm(false);
+    };
+
+    const handleEditProduct = (product: Product) => {
+        setSelectedProduct(product);
+        setShowEditForm(true);
+    };
+
+    const handleUpdateProduct = (updatedProduct: Product) => {
+        setProducts(products.map((p) => (p.ID === updatedProduct.ID ? updatedProduct : p)));
+        setShowEditForm(false);
+        setSelectedProduct(null);
+    };
+
+    const handleDeleteProduct = async (id: string) => {
+        try {
+            const response = await fetch(`http://127.0.0.1:8000/api/products/${id}/`, {
+                method: "DELETE",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+            if (!response.ok) {
+                throw new Error("Failed to delete product");
+            }
+            setProducts(products.filter((p) => p.ID !== id));
+        } catch (error) {
+            console.error("Error deleting product:", error);
+        }
+    };
+
+    if (loading) {
+        return <div className="flex justify-center py-6 px-12">Loading...</div>;
+    }
+
     return (
         <div className="py-6 px-12">
-            <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
+            <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight mb-6">
                 Inventory Products
             </h3>
-            <div>
-                <ProductTable 
-                    data={sampleData} 
-                    onEdit={(product) => console.log('Edit product:', product)} 
-                    onDelete={(productId) => console.log('Delete product with ID:', productId)} 
+            <Card>
+                <CardHeader>
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <CardTitle>
+                                <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
+                                    Product List
+                                </h4>
+                            </CardTitle>
+                            <CardDescription>Manage your inventory products</CardDescription>
+                        </div>
+                        <Button variant="default" onClick={() => setShowAddForm(true)}>
+                            Add Product
+                        </Button>
+                    </div>
+                </CardHeader>
+                <CardContent>
+                    <ProductTable
+                        data={products}
+                        onEdit={handleEditProduct}
+                        onDelete={handleDeleteProduct}
+                    />
+                </CardContent>
+            </Card>
+            {showAddForm && (
+                <AddProductForm
+                    onAdd={handleAddProduct}
+                    onClose={() => setShowAddForm(false)}
                 />
-            </div>
+            )}
+            {showEditForm && selectedProduct && (
+                <EditProductForm
+                    product={selectedProduct}
+                    onUpdate={handleUpdateProduct}
+                    onClose={() => {
+                        setShowEditForm(false);
+                        setSelectedProduct(null);
+                    }}
+                />
+            )}
         </div>
     );
 }

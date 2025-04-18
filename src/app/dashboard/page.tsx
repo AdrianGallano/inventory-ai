@@ -14,6 +14,7 @@ import AnalyticsCard from "@/features/analytics/analytics-card";
 import AddProductForm from "@/features/crud/AddProductForm";
 import EditProductForm from "@/features/crud/EditProductForm";
 import Product from "@/features/products/domains/Product";
+import InsightsTabs from "@/features/insights/InsightsTabs";
 
 interface ApiProduct {
     id: number;
@@ -23,12 +24,21 @@ interface ApiProduct {
     price: number;
 }
 
+interface Insights {
+    summary: string;
+    trends: string;
+    actions: string;
+}
+
+
 export default function Page() {
     const [products, setProducts] = useState<Product[]>([]);
     const [loading, setLoading] = useState(true);
     const [showAddForm, setShowAddForm] = useState(false);
     const [showEditForm, setShowEditForm] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+    const [insights, setInsights] = useState<Insights | null>(null);
+    const [insightsLoading, setInsightsLoading] = useState(false);
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -59,6 +69,36 @@ export default function Page() {
         };
         fetchProducts();
     }, []);
+
+    const generateInsights = async () => {
+        setInsightsLoading(true);
+        try {
+            const response = await fetch("http://127.0.0.1:8000/api/insights/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+
+            if (!response.ok) {
+                const errorBody = await response.text();
+                console.error("Insights API Error:", response.status, errorBody);
+                throw new Error(`Failed to generate insights: ${errorBody}`);
+            }
+
+            const generatedInsights = await response.json();
+            setInsights(generatedInsights);
+        } catch (error) {
+            console.error("Error generating insights:", error);
+            setInsights({
+                summary: "Unable to generate summary at this time.",
+                trends: "Unable to generate trends at this time.",
+                actions: "Unable to generate actions at this time.",
+            });
+        } finally {
+            setInsightsLoading(false);
+        }
+    };
 
     const handleAddProduct = (newProduct: Product) => {
         setProducts([...products, newProduct]);
@@ -154,7 +194,11 @@ export default function Page() {
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="h-[430px]">
-                            sample keme.
+                            <InsightsTabs
+                                insights={insights}
+                                onGenerate={generateInsights}
+                                isLoading={insightsLoading}
+                            />
                         </CardContent>
                     </Card>
                 </div>
