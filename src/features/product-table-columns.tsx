@@ -36,7 +36,15 @@ export const columns = (onEdit: (product: Product) => void, onDelete: (id: strin
     },
     {
         accessorKey: "ID",
-        header: "ID",
+        header: ({ column }) => (
+            <Button
+                variant="ghost"
+                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+                ID
+                <ArrowUpDown />
+            </Button>
+        ),
         cell: ({ row }) => (
             <div className="capitalize">{row.getValue("ID")}</div>
         ),
@@ -97,9 +105,14 @@ export const columns = (onEdit: (product: Product) => void, onDelete: (id: strin
                     Price
                     <ArrowUpDown />
                 </Button>
-            )
+            );
         },
         cell: ({ row }) => <div className="lowercase">{row.getValue("price")}</div>,
+        sortingFn: (rowA, rowB, columnId) => {
+            const a = parseFloat(rowA.getValue(columnId)) || 0;
+            const b = parseFloat(rowB.getValue(columnId)) || 0;
+            return a - b; // Ascending order
+        },
     },
     {
         id: "actions",
