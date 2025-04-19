@@ -28,11 +28,19 @@ export default function InsightsTabs({ insights, onGenerate, isLoading }: Insigh
     ),
     strong: ({ children, ...props }) => {
       const text = children?.toString() || "";
-      if (text.includes("⚠")) {
+      if (text.includes("❗")) {
         return (
           <strong className="font-semibold text-foreground flex items-center gap-1" {...props}>
-            <AlertTriangle className="h-4 w-4 text-yellow-500" />
-            {text.replace("⚠", "").trim()}
+            <AlertTriangle className="h-4 w-4 text-red-500" />
+            {text.replace("❗", "").trim()}
+          </strong>
+        );
+      }
+      if (text.includes("⚠️")) {
+        return (
+          <strong className="font-semibold text-foreground flex items-center gap-1 mt-5" {...props}>
+            <AlertTriangle className="h-4 w-4 text-orange-500" />
+            {text.replace("⚠️", "").trim()}
           </strong>
         );
       }

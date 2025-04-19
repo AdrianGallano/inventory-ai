@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import ProductTable from "@/features/products/product-table";
 import AddProductForm from "@/features/crud/AddProductForm";
 import EditProductForm from "@/features/crud/EditProductForm";
@@ -22,36 +23,45 @@ export default function Page() {
     const [showAddForm, setShowAddForm] = useState(false);
     const [showEditForm, setShowEditForm] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+    const [error, setError] = useState<string | null>(null);
+    const router = useRouter();
 
     useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                const response = await fetch("http://127.0.0.1:8000/api/products/", {
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                });
-                if (!response.ok) {
-                    throw new Error("Failed to fetch products");
-                }
-                const data: ApiProduct[] = await response.json();
-                const transformedData: Product[] = data.map((item) => ({
-                    ID: item.id.toString(),
-                    name: item.name,
-                    category: item.category,
-                    quantity: item.quantity,
-                    price: item.price,
-                }));
-                setProducts(transformedData);
-            } catch (error) {
-                console.error("Error fetching products:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
+        const token = localStorage.getItem("access_token");
+        if (!token) {
+          router.push("/login");
+        } else {
+          fetchProducts();
+        }
+    }, [router]);
 
-        fetchProducts();
-    }, []);
+    const fetchProducts = async () => {
+        try {
+            const token = localStorage.getItem("access_token");
+            const response = await fetch("http://127.0.0.1:8000/api/products/", {
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },
+            });
+            if (!response.ok) {
+                throw new Error("Failed to fetch products");
+            }
+            const data: ApiProduct[] = await response.json();
+            const transformedData: Product[] = data.map((item) => ({
+                ID: item.id.toString(),
+                name: item.name,
+                category: item.category,
+                quantity: item.quantity,
+                price: item.price,
+            }));
+            setProducts(transformedData);
+        } catch (error) {
+            console.error("Error fetching products:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handleAddProduct = (newProduct: Product) => {
         setProducts([...products, newProduct]);
@@ -71,10 +81,13 @@ export default function Page() {
 
     const handleDeleteProduct = async (id: string) => {
         try {
+            
+            const token = localStorage.getItem("access_token");
             const response = await fetch(`http://127.0.0.1:8000/api/products/${id}/`, {
                 method: "DELETE",
                 headers: {
                     "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
                 },
             });
             if (!response.ok) {

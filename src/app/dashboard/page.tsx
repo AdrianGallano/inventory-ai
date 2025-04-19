@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation'; // Use App Router
+import { useRouter } from 'next/navigation';
 import ProductTable from '@/features/products/product-table';
 import {
   Card,
@@ -179,9 +179,12 @@ export default function Page() {
 
   // Calculate analytics metrics
   const totalItems = products.length;
-  const lowStock = products.filter((p) => p.quantity < 10).length;
+  const lowStock = products.filter((p) => p.quantity < 10 && p.quantity !== 0).length;
   const outOfStock = products.filter((p) => p.quantity === 0).length;
-  const totalValue = products.reduce((sum, p) => sum + p.quantity * p.price, 0).toFixed(2);
+  const totalValue = products
+    .reduce((sum, p) => sum + p.quantity * p.price, 0)
+    .toFixed(2)
+    .replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
 
   return (
     <div className="flex flex-col gap-6 py-6 px-12">
