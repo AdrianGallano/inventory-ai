@@ -28,10 +28,17 @@ export default function EditProductForm({ product, onUpdate, onClose }: EditProd
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
+
+            const token = localStorage.getItem('access_token');
+            if (!token) {
+                throw new Error('No access token found. Please log in.');
+            }
+            
             const response = await fetch(`http://127.0.0.1:8000/api/products/${product.ID}/`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
+                    'Authorization': `Bearer ${token}`,
                 },
                 body: JSON.stringify({
                     name: formData.name,

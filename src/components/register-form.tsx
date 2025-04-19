@@ -14,12 +14,14 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
-export function LoginForm({
+export function RegisterForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<'div'>) {
   const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const router = useRouter();
 
@@ -27,16 +29,22 @@ export function LoginForm({
     e.preventDefault();
     setError('');
 
+    // Validate password match
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
+
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/login/', {
+      const response = await fetch('http://127.0.0.1:8000/api/register/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ username, email, password }),
       });
 
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.error || 'Login failed');
+        throw new Error(data.error || 'Registration failed');
       }
 
       localStorage.setItem('access_token', data.access);
@@ -51,9 +59,9 @@ export function LoginForm({
     <div className={cn('flex flex-col gap-6', className)} {...props}>
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl">Login</CardTitle>
+          <CardTitle className="text-2xl">Register</CardTitle>
           <CardDescription>
-            Enter your username and password to login to your account
+            Enter your details below to create your account
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -71,6 +79,17 @@ export function LoginForm({
                 />
               </div>
               <div className="grid gap-2">
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="m@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="grid gap-2">
                 <div className="flex items-center">
                   <Label htmlFor="password">Password</Label>
                 </div>
@@ -81,24 +100,28 @@ export function LoginForm({
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
-                <div className="flex items-center justify-between">
-                  <a
-                    href="/register"
-                    className="text-sm underline-offset-4 hover:underline"
-                  >
-                    New User? Register
-                  </a>
-                  <a
-                    href="/forgot-password"
-                    className="text-sm underline-offset-4 hover:underline"
-                  >
-                    Forgot your password?
-                  </a>
+              </div>
+              <div className="grid gap-2">
+                <div className="flex items-center">
+                  <Label htmlFor="confirmpassword">Confirm Password</Label>
                 </div>
+                <Input
+                  id="confirmpassword"
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required
+                />
               </div>
               {error && <p className="text-red-500 text-sm">{error}</p>}
+              <a
+                href="/login"
+                className="flex justify-center text-sm underline-offset-4 hover:underline"
+              >
+                Already have an account? Login
+              </a>
               <Button type="submit" className="w-full">
-                Login
+                Register
               </Button>
             </div>
           </form>

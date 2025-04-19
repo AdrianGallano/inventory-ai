@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import {
     Card,
@@ -23,14 +24,23 @@ export default function AddProductForm({ onAdd, onClose }: AddProductFormProps) 
         quantity: 0,
         price: 0,
     });
+    const [error, setError] = useState<string | null>(null);
+    const router = useRouter();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setError(null);
         try {
+            const token = localStorage.getItem('access_token');
+            if (!token) {
+                throw new Error('No access token found. Please log in.');
+            }
+
             const response = await fetch("http://127.0.0.1:8000/api/products/", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
+                    'Authorization': `Bearer ${token}`,
                 },
                 body: JSON.stringify({
                     name: formData.name,
@@ -40,7 +50,15 @@ export default function AddProductForm({ onAdd, onClose }: AddProductFormProps) 
                 }),
             });
             if (!response.ok) {
-                throw new Error("Failed to add product");
+                if (response.status === 401) {
+                    // Unauthorized: Clear tokens and redirect to login
+                    localStorage.removeItem('access_token');
+                    localStorage.removeItem('refresh_token');
+                    router.push('/login');
+                    return;
+                  }
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Failed to add product');
             }
             const addedProduct: {
                 id: number;
