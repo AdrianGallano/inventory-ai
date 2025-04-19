@@ -115,6 +115,27 @@ export const columns = (onEdit: (product: Product) => void, onDelete: (id: strin
         },
     },
     {
+        accessorKey: "total",
+        header: ({ column }) => (
+            <Button
+                variant="ghost"
+                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+                Total
+                <ArrowUpDown />
+            </Button>
+        ),
+        accessorFn: (row) => row.price * row.quantity, // Compute total
+        cell: ({ row }) => (
+            <div>{(Number(row.getValue("total")) || 0).toFixed(2)}</div> // Format as number
+        ),
+        sortingFn: (rowA, rowB, columnId) => {
+            const a = parseFloat(rowA.getValue(columnId)) || 0;
+            const b = parseFloat(rowB.getValue(columnId)) || 0;
+            return a - b; // Ascending order
+        },
+    },
+    {
         id: "actions",
         enableHiding: false,
         cell: ({row}) => {

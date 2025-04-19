@@ -45,6 +45,7 @@ export default function ProductTable({ data, onEdit, onDelete }: ProductTablePro
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
     const [rowSelection, setRowSelection] = React.useState({})
+    const [globalFilter, setGlobalFilter] = React.useState("")
 
     const table = useReactTable({
         data,
@@ -62,6 +63,15 @@ export default function ProductTable({ data, onEdit, onDelete }: ProductTablePro
             columnFilters,
             columnVisibility,
             rowSelection,
+            globalFilter,
+        },
+        onGlobalFilterChange: setGlobalFilter,
+        globalFilterFn: (row, columnId, filterValue) => {
+            const searchValue = filterValue.toLowerCase();
+            const cellValue = row.getValue(columnId);
+            return cellValue != null
+                ? String(cellValue).toLowerCase().includes(searchValue)
+                : false;
         },
     })
 
@@ -69,11 +79,9 @@ export default function ProductTable({ data, onEdit, onDelete }: ProductTablePro
         <div className="w-full">
             <div className="flex items-center py-4">
                 <Input
-                    placeholder="Search by name..."
-                    value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-                    onChange={(event) =>
-                        table.getColumn("name")?.setFilterValue(event.target.value)
-                    }
+                    placeholder="Search items..."
+                    value={globalFilter}
+                    onChange={(event) => setGlobalFilter(event.target.value)}
                     className="max-w-sm"
                 />
                 <DropdownMenu>

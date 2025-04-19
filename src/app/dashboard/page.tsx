@@ -138,7 +138,7 @@ export default function Page() {
 
     // Calculate analytics metrics
     const totalItems = products.length;
-    const lowStock = products.filter((p) => p.quantity <= 10).length; // Adjust threshold as needed
+    const lowStock = products.filter((p) => p.quantity < 10).length; // Adjust threshold as needed
     const outOfStock = products.filter((p) => p.quantity === 0).length;
     const totalValue = products.reduce((sum, p) => sum + p.quantity * p.price, 0).toFixed(2);
 
