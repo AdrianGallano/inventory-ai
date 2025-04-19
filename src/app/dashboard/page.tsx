@@ -182,18 +182,8 @@ export default function Page() {
                     </Card>
                 </div>
                 <div className="flex-2">
-                    <Card className="p-4">
-                        <CardHeader className="p-0">
-                            <CardTitle>
-                                <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
-                                    AI Insights
-                                </h4>
-                            </CardTitle>
-                            <CardDescription>
-                                AI-powered analysis and recommendations
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent className="h-[430px]">
+                    <Card>
+                        <CardContent>
                             <InsightsTabs
                                 insights={insights}
                                 onGenerate={generateInsights}

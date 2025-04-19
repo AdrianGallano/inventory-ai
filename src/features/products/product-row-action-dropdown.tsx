@@ -28,7 +28,6 @@ export default function ProductRowActionDropDown({product, onEdit, onDelete}: Pr
             <DropdownMenuContent align="end">
                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>View Details</DropdownMenuItem>
                 <DropdownMenuItem
                     onClick={() => onEdit(product)}
                 >

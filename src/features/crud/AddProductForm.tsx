@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import {
     Card,
     CardContent,
+    CardDescription,
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
@@ -70,54 +71,71 @@ export default function AddProductForm({ onAdd, onClose }: AddProductFormProps) 
                 </CardHeader>
                 <CardContent>
                     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-                        <input
-                            type="text"
-                            placeholder="Name"
-                            value={formData.name}
-                            onChange={(e) =>
-                                setFormData({ ...formData, name: e.target.value })
-                            }
-                            className="border p-2 rounded"
-                            required
-                        />
-                        <input
-                            type="text"
-                            placeholder="Category"
-                            value={formData.category}
-                            onChange={(e) =>
-                                setFormData({ ...formData, category: e.target.value })
-                            }
-                            className="border p-2 rounded"
-                            required
-                        />
-                        <input
-                            type="number"
-                            placeholder="Quantity"
-                            value={formData.quantity}
-                            onChange={(e) =>
-                                setFormData({
-                                    ...formData,
-                                    quantity: parseInt(e.target.value) || 0,
-                                })
-                            }
-                            className="border p-2 rounded"
-                            required
-                        />
-                        <input
-                            type="number"
-                            placeholder="Price"
-                            value={formData.price}
-                            onChange={(e) =>
-                                setFormData({
-                                    ...formData,
-                                    price: parseFloat(e.target.value) || 0,
-                                })
-                            }
-                            className="border p-2 rounded"
-                            step="0.01"
-                            required
-                        />
-                        <div className="flex gap-2">
+                        <div className="flex flex-col gap-2">
+                            <CardDescription>
+                                Name
+                            </CardDescription>
+                            <input 
+                                type="text"
+                                value={formData.name}
+                                onChange={(e) =>
+                                    setFormData({ ...formData, name: e.target.value })
+                                }
+                                className="border p-2 rounded"
+                                required
+                            />
+                        </div>
+                        <div className="flex flex-col gap-2">
+                            <CardDescription>
+                                Category
+                            </CardDescription>
+                            <input
+                                type="text"
+                                value={formData.category}
+                                onChange={(e) =>
+                                    setFormData({ ...formData, category: e.target.value })
+                                }
+                                className="border p-2 rounded"
+                                required
+                            />
+                        </div>
+                        <div className="flex flex-col gap-2">
+                            <CardDescription>
+                                Quantity
+                            </CardDescription>               
+                            <input
+                                type="number"
+                                value={formData.quantity}
+                                onChange={(e) =>
+                                    setFormData({
+                                        ...formData,
+                                        quantity: parseInt(e.target.value) || 0,
+                                    })
+                                }
+                                className="border p-2 rounded"
+                                required
+                            />
+                        </div>
+                        <div className="flex flex-col gap-2">
+                            <CardDescription>
+                                Price
+                            </CardDescription>
+                            <input
+                                type="number"
+                                placeholder="Price"
+                                value={formData.price}
+                                onChange={(e) =>
+                                    setFormData({
+                                        ...formData,
+                                        price: parseFloat(e.target.value) || 0,
+                                    })
+                                }
+                                className="border p-2 rounded"
+                                step="0.01"
+                                required
+                            />
+                        </div>
+                        <div className="flex gap-2 justify-end">
                             <Button variant="outline" onClick={onClose}>
                                 Cancel
                             </Button>
